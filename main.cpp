@@ -40,7 +40,7 @@ class Time {
             minutes = stoi(TimeString.substr(2, 2));
         }
 
-        string ToString() {
+        void ToString() {
             int h = hour;
             int m = minutes;
             stringstream ss;
@@ -49,29 +49,73 @@ class Time {
             if (m < 10) ss << "0";
             ss << m;
 
-            return ss.str();
+            finalTime = ss.str();
         }
 
         void AdjustTime(int delta) {
             totalMinutes += delta;
 
-            totalMinutes = (totalMinutes + 1440) % 1440;
+            totalMinutes = (totalMinutes % 1440 + 1440) % 1440;
             hour = totalMinutes / 60;
             minutes = totalMinutes % 60;
+
+            ToString();
         }
+
+        string getFinalString() const {return finalTime;};
     private:
         int hour;
         int minutes;
         int totalMinutes;
+        string finalTime;
 };
 
 int main() {
 
     FlightTimes test("0630", true, "Boston");
 
-    Time testTime(test.GetTime());
+    Time testTime(test.GetTime()); 
 
-    cout << testTime.GetHour() << " " << testTime.GetMinutes() << endl;
+    //Testing 
+
+    testTime.AdjustTime(60);
+    cout << "60 " << (testTime.getFinalString() == "0730") << endl;
+
+    testTime.AdjustTime(-60);
+    cout << "-60 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(150);
+    cout << "150 " << (testTime.getFinalString() == "0900") << endl;
+
+    testTime.AdjustTime(-150);
+    cout << "-150 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(2880);
+    cout << "2880 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(30);
+    cout << "30 " << (testTime.getFinalString() == "0700") << endl;
+
+    testTime.AdjustTime(-30);
+    cout << "-30 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(0);
+    cout << "0 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(1440);
+    cout << "1440 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(1441);
+    cout << "1441 " << (testTime.getFinalString() == "0631") << endl;
+
+    testTime.AdjustTime(-1441);
+    cout << "-1441 " << (testTime.getFinalString() == "0630") << endl;
+
+    testTime.AdjustTime(68);
+    cout << "68 " << (testTime.getFinalString() == "0738") << endl;
+
+    testTime.AdjustTime(-68);
+    cout << "-68 " << (testTime.getFinalString() == "0630") << endl;
 
     return 0;
 }
